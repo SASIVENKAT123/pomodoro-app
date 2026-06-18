@@ -24,7 +24,7 @@ function App() {
     return !data;
   });
   const [showPlanModal, setShowPlanModal] = useState(false);
-  const [planQueue, setPlanQueue] = useState([]);
+  // const [planQueue, setPlanQueue] = useState([]);
 
   const [minutes, setMinutes] = useState(() => {
     const live = getLiveTimerState();
@@ -153,16 +153,16 @@ function App() {
 
           <header className="flex justify-between items-center px-8 py-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/25" />
+              {/* <div className="w-10 h-10 rounded-full bg-white/25" /> */}
                 <span className ="text-[#D4AF37] font-bold font-sans">Welcome, <strong>{userData?.name|| "Guest"}</strong></span>
               
             </div>
 
-            <nav className ="flex gap-6 text-white/50 text-sm font-sans">
+            {/* <nav className ="flex gap-6 text-white/50 text-sm font-sans">
               <a href="#" className="hover:text-white">Plan your day</a>
               <a href="#" className="hover:text-white">Change Timer</a>
               <a href="#" className="hover:text-white">Change color</a>
-            </nav>
+            </nav> */}
           </header>
 
           <main className="flex-1 flex flex-col items-center justify-center">
