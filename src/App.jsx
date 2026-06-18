@@ -9,6 +9,13 @@ function App() {
       return sessionData? JSON.parse(sessionData) : null;
   };
 
+  //read active ticking state across refreshes
+
+  const getLiveTimerState = () => {
+    const liveData = sessionStorage.getItem("pomodoroTimerState");
+    return liveData ? JSON.parse(liveData) : null;
+  };
+
   // step:1 State (app memory)
 
   const [userData, setUserData]  = useState(() => getSessionData());
@@ -20,25 +27,56 @@ function App() {
   const [planQueue, setPlanQueue] = useState([]);
 
   const [minutes, setMinutes] = useState(() => {
-    const data = getSessionData();
-    return data ? data.focusTime :25;
+    const live = getLiveTimerState();
+    if(live) return live.minutes;
+    const config = getSessionData();
+    return config ? config.focusTime: 25;
   });
-  const [seconds, setSeconds] = useState(0)
-  const [isRunning, setIsRunning] = useState(false)
-  const [isBreak, setIsBreak] = useState(false)
-  const [totalSec, setTotalSec]= useState(0)
+  const [seconds, setSeconds] = useState(() => {
+    const live = getLiveTimerState();
+    return live ? live.seconds : 0;
+  });
+  const [isRunning, setIsRunning] = useState(() => {
+    const live = getLiveTimerState();
+    return live ? live.isRunning : false;
 
+  });
+  const [isBreak, setIsBreak] = useState(() => {
+    const live = getLiveTimerState();
+    return live ? live.isBreak : false;
 
+  });
+  const [totalSec, setTotalSec]= useState(()=> {
+    const live = getLiveTimerState();
+    return live ? live.totalSec : 0;
+
+  });
+
+  useEffect(() => {
+    if (userData) {
+      const stateSnapShot = { minutes, seconds, isRunning, isBreak, totalSec };
+      sessionStorage.setItem("pomodoroTimerState",JSON.stringify(stateSnapShot));
+
+    }
+  },[ minutes, seconds, isRunning, isBreak, totalSec, userData])
 
 
   const handleGenricPomodoro = (data) => {
     sessionStorage.setItem("pomodoroSession", JSON.stringify(data));
+    sessionStorage.removeItem("pomodoroTimerState");//clear layout state from prior session
+
     setUserData(data);
     setMinutes(data.focusTime);
     setShowOnboarding(false);
+    setSeconds(0);
+    setIsRunning(false);
+    setIsBreak(false);
+    setTotalSec(0);
+
   }
 
   const handleInitialPlan = (data) => {
+    sessionStorage.removeItem("pomodoroTimerState");
     setUserData(data);
     setShowOnboarding(false);
     setShowPlanModal(true);
